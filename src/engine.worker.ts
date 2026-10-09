@@ -8,10 +8,13 @@ async function read(file: File): Promise<Tags> {
 }
 async function decode(file:File, metadata:Tags){
  try{return await createImageBitmap(file,{imageOrientation:'from-image'});}catch{
-  const heif=await import('elheif'); await heif.ensureInitialized(); const result=heif.jsDecodeImage(new Uint8Array(await file.arrayBuffer()));
-  if(result.err || !result.data.length) throw Error('This image could not be decoded. Try JPEG, PNG, WebP or a standard HEIC.');
-  const image=result.data[0];const canvas=new OffscreenCanvas(image.width,image.height);const ctx=canvas.getContext('2d')!;
-  ctx.putImageData(new ImageData(new Uint8ClampedArray(image.data),image.width,image.height),0,0);
+  const heif=await import('libheif-js/libheif-wasm/libheif-bundle.mjs');const lib=await heif.default();
+  const images=new lib.HeifDecoder().decode(new Uint8Array(await file.arrayBuffer()));
+  if(!images.length)throw Error('This image could not be decoded. Try JPEG, PNG, WebP or a standard HEIC.');
+  const image=images[0], width=image.get_width(), height=image.get_height();
+  if(width*height>50_000_000){images.forEach(i=>i.free());throw Error('Use a photo under 50 megapixels.');}
+  const canvas=new OffscreenCanvas(width,height),ctx=canvas.getContext('2d')!,pixels=ctx.createImageData(width,height);
+  try{await new Promise<void>((resolve,reject)=>image.display(pixels,result=>result?resolve():reject(Error('HEIC decoding failed.'))));ctx.putImageData(pixels,0,0);}finally{images.forEach(i=>i.free());}
   // libheif applies HEIF item transforms. Some inputs also use EXIF orientation; the codec already handles container rotations.
   void metadata;return createImageBitmap(canvas);
  }

@@ -12,6 +12,7 @@ export function referenceTags(metadata: Tags): Tags {
 export function offsetFor(date: string, timezone: string) {
  if (!/^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}(:[0-9]{2})?$/.test(date)) throw Error('Choose a valid capture date.');
  const wall = Date.parse(date + 'Z');
+ if(!Number.isFinite(wall) || new Date(wall).toISOString().slice(0,19)!==(date.length===16?date+':00':date))throw Error('Choose a valid calendar date.');
  const formatter = new Intl.DateTimeFormat('en-CA', { timeZone: timezone, year:'numeric', month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit', second:'2-digit', hourCycle:'h23' });
  const partsAt = (ms: number) => { const parts=Object.fromEntries(formatter.formatToParts(ms).map(p=>[p.type,p.value])); return Date.UTC(+parts.year,+parts.month-1,+parts.day,+parts.hour,+parts.minute,+parts.second); };
  let instant=wall;
