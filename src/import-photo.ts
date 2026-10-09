@@ -38,7 +38,7 @@ export function importPhoto(metadata:Tags,filename:string,profiles:Profile[],fal
  if(location&&!altitude)missing.push('GPS altitude');
  const hasMakerNotes=metadata['Apple:MakerNoteVersion']!==undefined;
  if(tags['EXIF:Make']==='Apple'&&!hasMakerNotes)missing.push('Apple MakerNotes');
- const settings:Settings={...fallback,date:validDate,timezone,software:software===undefined?defaultSoftware(catalog[phone].name,validDate,String(tags['EXIF:Software']??'')):String(software),location,latitude:location?latitude:'',longitude:location?longitude:'',altitude:location?altitude:'',filename:filename.replace(/\.[^.]*$/,'').replace(/[^a-zA-Z0-9_ -]/g,'_').slice(0,80)||fallback.filename,format:String(metadata['File:FileType']).match(/HEIC|HEIF/)?'heic':'jpeg'};
+ const settings:Settings={...fallback,date:validDate,timezone,software:software===undefined?defaultSoftware(catalog[phone].name,validDate,String(tags['EXIF:Software']??'')):String(software),location,latitude:location?latitude:'',longitude:location?longitude:'',altitude:location?altitude:'',filename:filename.replace(/\.[^.]*$/,'').replace(/[^a-zA-Z0-9_ -]/g,'_').slice(0,80)||fallback.filename,format:catalog[phone].platform==='ios'?'heic':'jpeg'};
  return {catalog,phone,lens,settings,missing,hasMakerNotes};
 }
 

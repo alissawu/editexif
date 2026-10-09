@@ -1,0 +1,11 @@
+import {webkit,devices} from 'playwright';import assert from 'node:assert/strict';
+const browser=await webkit.launch({headless:true});
+try{const page=await browser.newPage({...devices['iPhone 13'],acceptDownloads:true});await page.goto('http://localhost:48371');
+async function ready(){await page.waitForFunction(()=>!document.querySelector('fieldset').disabled,null,{timeout:360000});assert.deepEqual(await page.locator('.error').allTextContents(),[]);}
+const picker=page.getByLabel('Import from a real photo',{exact:true});assert.equal(await picker.getAttribute('capture'),null);assert.equal(await picker.getAttribute('accept'),'image/*,.heic,.heif');
+await picker.setInputFiles('/files/IMG_9145_01a11d19-5534-7095-86a0-f120df9d263a.heic');await ready();assert.equal(await page.getByLabel('iOS version',{exact:true}).inputValue(),'26.6.2');assert.equal(await page.getByLabel('Output format').inputValue(),'heic');assert(await page.getByLabel('Include GPS').isChecked());
+await page.getByRole('button',{name:'Clear',exact:true}).click();await picker.setInputFiles('/tmp/editexif-no-ids.png');await ready();assert((await page.locator('.import-photo [role=status]').innerText()).includes('GPS coordinates'));
+await page.getByLabel('Choose photo',{exact:true}).setInputFiles('/tmp/editexif-no-ids.png');await ready();await page.getByLabel('Output format').selectOption('jpeg');await page.getByRole('button',{name:'Create photo'}).click();await ready();
+const download=page.waitForEvent('download');await page.getByRole('button',{name:/Download/}).click();await(await download).saveAs('artifacts/webkit.jpg');assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));await page.screenshot({path:'artifacts/webkit-mobile.png',fullPage:true});console.log('Desktop WebKit with iPhone viewport import, native HEIC metadata, stripped import warnings, local JPEG export/download and overflow passed. Not an actual iOS Safari picker test.');
+}finally{await browser.close();}
+

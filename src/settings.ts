@@ -2,8 +2,8 @@ export type Tags = Record<string, string | number>;
 export type Settings = { date: string; timezone: string; software: string; filename: string; format: 'heic' | 'jpeg'; location: boolean; latitude: string; longitude: string; altitude: string };
 export function randomFilename() { return 'IMG_' + String(crypto.getRandomValues(new Uint32Array(1))[0] % 10000).padStart(4, '0'); }
 export function localDate() { const d = new Date(); return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 19); }
-// Only standard capture tags are copied. Never propagate identity, GPS, maker notes, signed manifests or editor history.
-export const captureKeys = new Set(['Make','Model','Software','LensModel','LensMake','FocalLength','FocalLengthIn35mmFormat','FNumber','ExposureTime','ISO','ExposureProgram','MeteringMode','Flash','WhiteBalance','ExposureCompensation','SceneCaptureType','SensingMethod','XResolution','YResolution','ResolutionUnit']);
+// This allowlist handles standard capture tags only. MakerNotes/shot identity are handled separately; GPS/provenance/editor data are excluded.
+export const captureKeys = new Set(['Make','Model','HostComputer','Software','LensModel','LensMake','FocalLength','FocalLengthIn35mmFormat','FNumber','ExposureTime','ISO','ExposureProgram','MeteringMode','Flash','WhiteBalance','ExposureCompensation','SceneCaptureType','SensingMethod','XResolution','YResolution','ResolutionUnit']);
 export function referenceTags(metadata: Tags): Tags {
  const result: Tags = {};
  for (const [key,value] of Object.entries(metadata)) { const [group,name] = key.split(':'); if (['IFD0','ExifIFD','IFD1'].includes(group) && captureKeys.has(name) && group !== 'IFD1') result['EXIF:' + name] = value; }
@@ -13,6 +13,11 @@ export function offsetFor(date: string, timezone: string) {
  if (!/^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}(:[0-9]{2})?$/.test(date)) throw Error('Choose a valid capture date.');
  const wall = Date.parse(date + 'Z');
  if(!Number.isFinite(wall) || new Date(wall).toISOString().slice(0,19)!==(date.length===16?date+':00':date))throw Error('Choose a valid calendar date.');
+ if(/^[+-][0-9]{2}:[0-9]{2}$/.test(timezone)){
+  const hours=Number(timezone.slice(1,3)),minutes=Number(timezone.slice(4));if(hours>14||minutes>59||(hours===14&&minutes))throw Error('Invalid timezone offset.');
+  const delta=(hours*60+minutes)*(timezone[0]==='-'?-1:1);
+  return {offset:timezone,instant:wall-delta*60000};
+ }
  const formatter = new Intl.DateTimeFormat('en-CA', { timeZone: timezone, year:'numeric', month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit', second:'2-digit', hourCycle:'h23' });
  const partsAt = (ms: number) => { const parts=Object.fromEntries(formatter.formatToParts(ms).map(p=>[p.type,p.value])); return Date.UTC(+parts.year,+parts.month-1,+parts.day,+parts.hour,+parts.minute,+parts.second); };
  let instant=wall;
@@ -26,6 +31,7 @@ export function buildTags(base: Tags, s: Settings, width: number, height: number
  const {offset, instant}=offsetFor(s.date,s.timezone);
  const date=s.date.replace('T',' ').replace(/-/g,':')+(s.date.length===16?':00':'');
  const tags: Tags={...base,'EXIF:ExifVersion':'0232','EXIF:FlashpixVersion':'0100','EXIF:Orientation':1,'EXIF:ExifImageWidth':width,'EXIF:ExifImageHeight':height,'EXIF:ColorSpace':1,'EXIF:DateTimeOriginal':date,'EXIF:CreateDate':date,'EXIF:ModifyDate':date,'EXIF:OffsetTime':offset,'EXIF:OffsetTimeOriginal':offset,'EXIF:OffsetTimeDigitized':offset};
+ if(base['EXIF:Make']==='Apple')tags['EXIF:HostComputer']=base['EXIF:Model'];
  delete tags['EXIF:Software']; if(s.software.trim()) tags['EXIF:Software']=s.software.trim();
  if(!/^[a-zA-Z0-9_ -]{1,80}$/.test(s.filename)) throw Error('Use a filename with letters, numbers, spaces, underscores or hyphens.');
  if(s.location){
