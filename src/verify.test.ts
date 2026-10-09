@@ -19,3 +19,11 @@ test('full Apple payload and preserved input identity verify',async()=>{
  assert.throws(()=>verifyAppleMakerNotes({...source,...ids,'Apple:Apple_0x00ff':'lost'},source,ids,ids),/survive/);
  assert.throws(()=>verifyAppleMakerNotes(source,source,{'Apple:PhotoIdentifier':'reference'},{}),/reused/);
 });
+
+test('lossless HDR readback permits only unchanged rendering metadata',()=>{
+ const hdr={'XMP-HDRGainMap:HDRGainMapVersion':131072,'XMP-HDRGainMap:HDRGainMapHeadroom':4.5};
+ verifyExport(hdr,{},false,hdr);
+ assert.throws(()=>verifyExport({...hdr,'XMP-HDRGainMap:HDRGainMapHeadroom':2},{},false,hdr),/private/);
+ const editor={'XMP-xmp:CreatorTool':'Editor'};
+ assert.throws(()=>verifyExport(editor,{},false,editor),/private/);
+});

@@ -33,3 +33,24 @@ export rerun, and six fresh-context imports passed. This does not establish a
 cause for that single timeout and is not a real iPhone Safari test. Chromium
 reference/import tests passed including unknown Apple payload/ID preservation,
 stripped files and native iPhone input export in both formats.
+
+## Same-format metadata-only export
+
+Same-format JPEG/HEIC now bypass pixel decode/encode when native dimensions are
+available. ExifTool removes editable metadata, restores ICC where supported,
+writes requested tags and retains original EXIF orientation/color space.
+HEIC auxiliary/grid items remain in the source container. Known HDR rendering
+XMP is permitted only when it matches input; arbitrary editor/provenance XMP
+still fails closed. This is not a promise to scrub all auxiliary payload data.
+
+Native iPhone HEIC reference exports validated without warnings and preserved
+Apple payload/IDs. verify-lossless-heic.py compared every non-metadata item by
+ID/type/SHA-256, including HEVC/grid/auxiliary items: exact match.
+
+Local unthrottled Chromium, same 4032x3024 native HEIC workflow, one first/repeat
+sample each, not actual device or network timings. Total workflow was 9103/8832
+ms before, 3316/2848 ms after. Import 830/747 to 103/48 ms; inspection 1098/1032
+to 17/12 ms; export 7117/7015 to 3132/2754 ms. Both after samples had no errors.
+Background preload downloads assets; compiled-module reuse/streaming remain
+separate unverified work. Export continues rigorous native-style ExifTool
+readback, not a lightweight substitute for unknown Apple tags.

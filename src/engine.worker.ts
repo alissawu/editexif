@@ -56,30 +56,45 @@ self.onmessage=async (event:MessageEvent<{id:number;action:'inspect'|'import'|'e
   }
   if(!chosen['EXIF:Model'])throw Error('Reference has no camera model in standard EXIF. Use a camera original or remove the reference.');
   buildTags(chosen,settings,1,1);
+  const sameFormat=(settings.format==='jpeg'&&before['File:FileType']==='JPEG')||(settings.format==='heic'&&before['File:FileType']==='HEIC');
+  let width=Number(before['File:ImageWidth']??before['ExifIFD:ExifImageWidth']);
+  let height=Number(before['File:ImageHeight']??before['ExifIFD:ExifImageHeight']);
+  const lossless=sameFormat&&Number.isSafeInteger(width)&&Number.isSafeInteger(height)&&width>0&&height>0;
+  let clean:Blob,preview:Blob|undefined;
+  if(lossless){
+   self.postMessage({id,status:'Keeping original encoded pixels…'});
+   clean=file;
+  }else{
   self.postMessage({id,status:'Re-encoding clean pixels…'});
-  const bitmap=await decode(file,before); const {width,height}=bitmap;
+  const bitmap=await decode(file,before); width=bitmap.width;height=bitmap.height;
   if(width*height>50_000_000){bitmap.close();throw Error('Use a photo under 50 megapixels to keep browser memory safe.');}
   const canvas=new OffscreenCanvas(width,height);const ctx=canvas.getContext('2d',{willReadFrequently:true})!;
   ctx.fillStyle='#fff';ctx.fillRect(0,0,width,height);ctx.drawImage(bitmap,0,0);bitmap.close();
-  const preview=await canvas.convertToBlob({type:'image/jpeg',quality:0.85});
-  let clean:Blob;
+  preview=await canvas.convertToBlob({type:'image/jpeg',quality:0.85});
+
   if(settings.format==='heic'){
    const heif=await import('elheif');await heif.ensureInitialized();const rgba=ctx.getImageData(0,0,width,height);const result=heif.jsEncodeImage(new Uint8Array(rgba.data.buffer),width,height);
    if(result.err||!result.data.length)throw Error(result.err||'HEIC encoder failed. Try JPEG.');
    clean=new Blob([new Uint8Array(result.data)],{type:'image/heic'});
   }else clean=await canvas.convertToBlob({type:'image/jpeg',quality:0.94});
+  }
   const tags=buildTags(chosen,settings,width,height);
+  if(lossless){tags['EXIF:Orientation']=Number(before['IFD0:Orientation']??1);tags['EXIF:ColorSpace']=Number(before['ExifIFD:ColorSpace']??1);}
   const shotIds=resolveShotIds(before,makerMeta??{});
   tags['EXIF:ImageUniqueID']=shotIds['ExifIFD:ImageUniqueID'];
   self.postMessage({id,status:'Writing EXIF and checking output…'});
   const {writeMetadata}=await tool();
-  const output=await writeMetadata({name:'clean.'+(settings.format==='heic'?'heic':'jpg'),data:clean},tags,{fetch:localFetch,args:['-n','-q','-q']});
+  const output=await writeMetadata({name:'clean.'+(settings.format==='heic'?'heic':'jpg'),data:clean},tags,{fetch:localFetch,args:['-all=','-tagsFromFile','@','-ICC_Profile','-n','-q','-q']});
   if(!output.success)throw Error(output.error);
   let blob=new Blob([output.data],{type:settings.format==='heic'?'image/heic':'image/jpeg'});
   if(makerSource&&makerMeta){const {copyAppleMakerNotes}=await import('./makernotes');const copied=await copyAppleMakerNotes(blob,makerSource,settings.format,shotIds);blob=copied.blob;}
   const after=await read(new File([blob],'output.'+(settings.format==='heic'?'heic':'jpg')));
   for(const key of ['ExifIFD:ExifImageWidth','ExifIFD:ExifImageHeight'])if(Number(after[key])!==(key.endsWith('Width')?width:height))throw Error('Output dimensions did not verify. No download created.');
-  verifyExport(after,tags,!!makerSource);
+  const preservedHdr:Tags={};
+  if(lossless&&settings.format==='heic'){
+   for(const k of ['XMP-HDRGainMap:HDRGainMapVersion','XMP-HDRGainMap:HDRGainMapHeadroom','XMP-x:XMPToolkit'])if(before[k]!==undefined)preservedHdr[k]=before[k];
+  }
+  verifyExport(after,tags,!!makerSource,preservedHdr);
   if(makerMeta)verifyAppleMakerNotes(after,makerMeta,shotIds,before);
   self.postMessage({id,result:{blob,preview,before,after,width,height,tags}});
  }catch(error){self.postMessage({id,error:error instanceof Error?error.message:String(error)});}

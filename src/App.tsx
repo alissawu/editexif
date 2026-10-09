@@ -65,7 +65,7 @@ export default function App(){
      </div>
 
     <div className="privacy-note"><span className="privacy-symbol" aria-hidden="true">[✓]</span><p>No uploads. No account. No tracking.<br/>Your photo never leaves this tab.</p></div>
-    <details className="how"><summary>What this changes</summary><p>The image is re-encoded, removing existing metadata, then standard EXIF tags are added. Pixels keep their appearance, but compression may change them.</p><p>This is not a native camera capture. Apple MakerNotes are copied from a real sample or reference, preserving known input shot IDs and generating missing ones. They describe that sample, not your scene. Depth, Live Photo data, HDR gain maps and valid provenance signatures are not recreated. It does not guarantee a detector result.</p></details>
+    <details className="how"><summary>What this changes</summary><p>Same-format JPEG and HEIC exports keep the original encoded pixels and orientation while replacing editable metadata. Format conversion re-encodes pixels and may change compression. Color profiles are retained where available.</p><p>This is not a native camera capture. Apple MakerNotes are copied from a real sample or reference, preserving known input shot IDs and generating missing ones. They describe that sample, not your scene. Existing HEIC auxiliary image data and HDR rendering tags may survive same-format export. Depth, Live Photo data, HDR gain maps and valid provenance signatures are not recreated by conversion. It does not guarantee a detector result.</p></details>
    </section>
    <section className="controls" aria-label="Export settings"><div className="section-label">03 / METADATA</div>
     <fieldset disabled={busy}>
