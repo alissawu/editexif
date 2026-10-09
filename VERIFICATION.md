@@ -15,3 +15,21 @@ Timezone tests cover browser-default selection, common-first and complete Intl-s
 No actual iOS/Android native-picker test has been run here. The WebKit hang was localized to asynchronous WebAssembly compilation inside the dedicated metadata worker after the 25 MB engine had downloaded, before EXIF parsing or HEIC decoding. isMobile and hasTouch reproduced it independently; user agent and screen scale did not. An independent minimal worker also hung once without mobile flags, so this is not exclusively phone emulation. A narrowly checked bundler compatibility patch uses synchronous WebAssembly.Module/Instance construction within the worker instead; it does not block the UI thread or modify global APIs. Build, 23 unit tests, full iPhone 13 WebKit emulation with native HEIC import, stripped warnings, JPEG/HEIC download and native EXIF readback, plus Chromium import/full export regressions pass with the patch. This is Linux Playwright WebKit 27.2, not an actual iOS Safari device test. Photo Library conversion, camera permissions, download behavior and limited-device memory require a real device. Missing metadata is observable; whether the OS stripped it cannot be proved from the delivered file alone. Native HEIC decode is tested, but unusual orientations, wide-gamut/HDR variants and maximum-size cases remain unverified.
 
 HEIC outputs are single images, not Apple's 512-pixel grid layout. No HDR gain map, depth or Live Photo auxiliaries are emitted. Copied HDR-related MakerNotes do not create HDR data. JPEG/HEIC codec/container characteristics differ from native camera capture. Pixels are re-encoded to sRGB with white alpha flattening; exposure tags describe a source sample, not the scene. No detector or camera-origin guarantee. See MAKERNOTES.md for the binding limitations and feasibility research.
+
+## Lightweight import and immutable asset cache
+
+Import and inspect now use exifr Blob header reads without decoding pixels or
+instantiating Perl. Native Apple MakerNotes are only marked as present here;
+export still uses complete ExifTool metadata/readback and unknown-tag validation.
+The heavy tools remain dynamic worker imports. A three-second idle timer or first
+pointer interaction prefetches hashed engine/CLI downloads, not compilation.
+Service worker caching covers only same-origin shipped /assets/ and /engine/
+GETs, never user blobs, HTML or API requests. Vercel immutable headers are declared
+but not verified on the production deployment.
+
+Full iPhone 13 WebKit emulation passed import and native JPEG/HEIC download readback.
+One initial run timed out on first import; an immediate standalone rerun, full
+export rerun, and six fresh-context imports passed. This does not establish a
+cause for that single timeout and is not a real iPhone Safari test. Chromium
+reference/import tests passed including unknown Apple payload/ID preservation,
+stripped files and native iPhone input export in both formats.

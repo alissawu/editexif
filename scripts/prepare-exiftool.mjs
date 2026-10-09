@@ -16,3 +16,13 @@ if(!cli.startsWith('use strict;')||!cli.includes('13.42'))throw Error('Unexpecte
 await writeFile('public/exiftool.pl',cli);
 console.log('Prepared pinned ExifTool CLI asset');
 
+const {mkdir,readdir,unlink}=await import('node:fs/promises');
+const {createHash}=await import('node:crypto');
+await mkdir('public/engine',{recursive:true});
+for(const name of await readdir('public/engine'))await unlink('public/engine/'+name);
+const assets={};
+for(const [key,name,data] of [['wasmUrl','zeroperl',await readFile('public/zeroperl.wasm')],['cliUrl','exiftool',Buffer.from(cli)]]){
+ const suffix=key==='wasmUrl'?'.wasm':'.pl';const hash=createHash('sha256').update(data).digest('hex').slice(0,16);const path='/engine/'+name+'-'+hash+suffix;
+ await writeFile('public'+path,data);assets[key]=path;
+}
+await writeFile('src/engine-assets.ts',Object.entries(assets).map(([key,path])=>'export const '+key+'='+JSON.stringify(path)+';').join('\n'));

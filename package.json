@@ -26,6 +26,7 @@
     "@6over3/zeroperl-ts": "1.0.10",
     "@uswriting/exiftool": "1.0.9",
     "elheif": "^0.1.0",
+    "exifr": "^7.1.3",
     "libheif-js": "^1.23.5",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",

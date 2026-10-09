@@ -7,3 +7,6 @@ artifacts/
 *.tsbuildinfo
 
 public/exiftool.pl
+
+public/engine/
+src/engine-assets.ts

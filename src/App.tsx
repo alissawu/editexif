@@ -1,3 +1,4 @@
+import {preloadEngine} from './preload';
 import {useEffect,useRef,useState} from 'react';
 import {timezoneOptions,zoneForCoordinates,withLocationTimezone} from './timezones';
 import templates from '../templates/phones.json';
@@ -5,7 +6,7 @@ import {importPhoto,type Profile} from './import-photo';
 const phones=templates;
 import {defaultSoftware,iosOptions} from './software';
 import {localDate,randomFilename,type Settings,type Tags} from './settings';
-type Output={blob:Blob;preview:Blob;before:Tags;after:Tags;width:number;height:number;tags:Tags};
+type Output={blob:Blob;preview?:Blob;before:Tags;after:Tags;width:number;height:number;tags:Tags};
 const initial:Settings={date:localDate(),timezone:Intl.DateTimeFormat().resolvedOptions().timeZone,software:defaultSoftware(phones[0].name,localDate(),String(phones[0].lenses[0].tags['EXIF:Software'])),filename:randomFilename(),format:'heic',location:false,latitude:'',longitude:'',altitude:''};
 const timezones=timezoneOptions(initial.timezone);
 export default function App(){
@@ -16,7 +17,12 @@ export default function App(){
  const worker=useRef<Worker|null>(null);const request=useRef(0);const objectUrl=useRef('');
  function resetOutput(){setOutput(undefined);setError('');}
  function update<K extends keyof Settings>(key:K,value:Settings[K]){resetOutput();setSettings(s=>{const next={...s,[key]:value};if(key==='software')softwareManual.current=true;if(key==='date'&&!softwareManual.current)next.software=defaultSoftware(phones[phone].name,String(value),String(phones[phone].lenses[lens].tags['EXIF:Software']));return ['latitude','longitude','location'].includes(key)?withLocationTimezone(next):next;});}
- useEffect(()=>{return()=>{worker.current?.terminate();if(objectUrl.current)URL.revokeObjectURL(objectUrl.current);};},[]);
+ useEffect(()=>{
+ if('serviceWorker' in navigator)void navigator.serviceWorker.register('/sw.js').catch(()=>{});
+ const timer=setTimeout(()=>void preloadEngine(),3000);
+ const warm=()=>void preloadEngine();
+ window.addEventListener('pointerdown',warm,{once:true,passive:true});
+ return()=>{clearTimeout(timer);window.removeEventListener('pointerdown',warm);worker.current?.terminate();if(objectUrl.current)URL.revokeObjectURL(objectUrl.current);};},[]);
  function showPreview(blob:Blob){if(objectUrl.current)URL.revokeObjectURL(objectUrl.current);objectUrl.current=URL.createObjectURL(blob);setPreview(objectUrl.current);}
  function run(action:'inspect'|'import'|'export',input:File){
   if(busy)return;resetOutput();setBusy(true);setStatus('Starting local engine…');
@@ -27,7 +33,7 @@ export default function App(){
    if(event.data.status){setStatus(event.data.status);return;}
    setBusy(false);setStatus('');if(event.data.error){setError(event.data.error);return;}
    const result=event.data.result!;if(action==='import'){const imported=importPhoto(result.before,input.name,templates,initial);setPhones(imported.catalog);setPhone(imported.phone);setLens(imported.lens);setSettings(imported.settings);setReference(imported.hasMakerNotes?input:undefined);setImportedName(input.name);setMissing(imported.missing);softwareManual.current=true;return;}setBefore(result.before);if(result.preview)showPreview(result.preview);
-   if(action==='export'){setOutput(result);showPreview(result.preview);}
+   if(action==='export'){setOutput(result);if(result.preview)showPreview(result.preview);}
   };
   worker.current.postMessage({id,action,file:input,reference,makerNotes:'makerNotes' in phones[phone].lenses[lens]?(phones[phone].lenses[lens] as {makerNotes:{path:string;sha256:string}}).makerNotes:undefined,base:phones[phone].lenses[lens].tags,settings});
  }

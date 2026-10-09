@@ -1,10 +1,13 @@
-import { parseMetadata, writeMetadata } from '@uswriting/exiftool';
+import {wasmUrl} from './engine-assets';
+import {readHeader} from './header-metadata';
+const tool=()=>import('@uswriting/exiftool');
 import {verifyExport,verifyAppleMakerNotes} from './verify';
-import {copyAppleMakerNotes} from './makernotes';
+
 import {resolveShotIds} from './shot-ids';
 import { buildTags, type Tags, type Settings } from './settings';
-const localFetch = async (..._args: unknown[]) => fetch('/zeroperl.wasm');
+const localFetch = async (..._args: unknown[]) => fetch(wasmUrl);
 async function read(file: File): Promise<Tags> {
+ const {parseMetadata}=await tool();
  const result=await parseMetadata({name:'input.'+(file.name.split('.').pop()||'jpg').replace(/[^a-z0-9]/gi,''),data:file},{fetch:localFetch,args:['-j','-n','-G1','-u'],transform:JSON.parse});
  if(!result.success) throw Error(result.error);
  return (result.data as Tags[])[0];
@@ -27,15 +30,12 @@ self.onmessage=async (event:MessageEvent<{id:number;action:'inspect'|'import'|'e
  try{
   if(file.size>60*1024*1024) throw Error('Use a photo under 60 MB.');
   self.postMessage({id,status:'Reading metadata locally…'});
-  const before=await read(file);
+  const before=action==='export'?await read(file):await readHeader(file);
   const mw=Number(before['File:ImageWidth']??before['ExifIFD:ExifImageWidth']), mh=Number(before['File:ImageHeight']??before['ExifIFD:ExifImageHeight']);
   if(mw*mh>50_000_000)throw Error('Use a photo under 50 megapixels to keep browser memory safe.');
   if(action==='import'){self.postMessage({id,result:{before}});return;}
   if(action==='inspect'){
-   const bitmap=await decode(file,before);const scale=Math.min(1,1400/Math.max(bitmap.width,bitmap.height));
-   const c=new OffscreenCanvas(Math.max(1,Math.round(bitmap.width*scale)),Math.max(1,Math.round(bitmap.height*scale)));
-   const ctx=c.getContext('2d')!;ctx.fillStyle='#fff';ctx.fillRect(0,0,c.width,c.height);ctx.drawImage(bitmap,0,0,c.width,c.height);bitmap.close();
-   self.postMessage({id,result:{before,preview:await c.convertToBlob({type:'image/jpeg',quality:0.85})}});return;
+   self.postMessage({id,result:{before}});return;
   }
   if(reference && reference.size>60*1024*1024)throw Error('Reference must be under 60 MB.');
   const referenceMeta=reference?await read(reference):undefined;
@@ -72,10 +72,11 @@ self.onmessage=async (event:MessageEvent<{id:number;action:'inspect'|'import'|'e
   const shotIds=resolveShotIds(before,makerMeta??{});
   tags['EXIF:ImageUniqueID']=shotIds['ExifIFD:ImageUniqueID'];
   self.postMessage({id,status:'Writing EXIF and checking output…'});
+  const {writeMetadata}=await tool();
   const output=await writeMetadata({name:'clean.'+(settings.format==='heic'?'heic':'jpg'),data:clean},tags,{fetch:localFetch,args:['-n','-q','-q']});
   if(!output.success)throw Error(output.error);
   let blob=new Blob([output.data],{type:settings.format==='heic'?'image/heic':'image/jpeg'});
-  if(makerSource&&makerMeta){const copied=await copyAppleMakerNotes(blob,makerSource,settings.format,shotIds);blob=copied.blob;}
+  if(makerSource&&makerMeta){const {copyAppleMakerNotes}=await import('./makernotes');const copied=await copyAppleMakerNotes(blob,makerSource,settings.format,shotIds);blob=copied.blob;}
   const after=await read(new File([blob],'output.'+(settings.format==='heic'?'heic':'jpg')));
   for(const key of ['ExifIFD:ExifImageWidth','ExifIFD:ExifImageHeight'])if(Number(after[key])!==(key.endsWith('Width')?width:height))throw Error('Output dimensions did not verify. No download created.');
   verifyExport(after,tags,!!makerSource);
