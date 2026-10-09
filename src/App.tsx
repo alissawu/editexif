@@ -38,7 +38,7 @@ export default function App(){
  const current=phones[phone].lenses[lens];const diffKeys=[...new Set([...Object.keys(before??{}),...Object.keys(output?.after??{})])].filter(k=>!['SourceFile','System:FileName','System:Directory','System:FileModifyDate','System:FileAccessDate','System:FileInodeChangeDate','ExifTool:ExifToolVersion'].includes(k)).sort();
  return <main>
   <header><a className="wordmark" href="/" aria-label="editexif home">editexif<span className="mark">*</span></a><span className="local"><span className="dot"/> LOCAL ONLY</span></header>
-  <section className="intro"><p className="eyebrow">A SMALL TOOL FOR PHOTO METADATA</p><h1>Same photo.<br/>New particulars.</h1><p className="lede">Choose a camera, a moment, a place.<br/>Everything stays in your browser.</p></section>
+  <section className="intro"><p className="eyebrow">A SMALL TOOL FOR PHOTO METADATA</p><h1>Same photo.<br/>New metadata.</h1><p className="lede">Choose a camera, a moment, a place.<br/>Everything stays in your browser.</p></section>
   <div className="workspace">
    <section className="image-panel" aria-label="Photo">
     <div className="section-label"><span>01 / PHOTO</span>{file&&<span>{(file.size/1048576).toFixed(1)} MB</span>}</div>
@@ -61,7 +61,7 @@ export default function App(){
     <div className="privacy-note"><span className="privacy-symbol" aria-hidden="true">[✓]</span><p>No uploads. No account. No tracking.<br/>Your photo never leaves this tab.</p></div>
     <details className="how"><summary>What this changes</summary><p>The image is re-encoded, removing existing metadata, then standard EXIF tags are added. Pixels keep their appearance, but compression may change them.</p><p>This is not a native camera capture. Apple MakerNotes are copied from a real sample or reference, preserving known input shot IDs and generating missing ones. They describe that sample, not your scene. Depth, Live Photo data, HDR gain maps and valid provenance signatures are not recreated. It does not guarantee a detector result.</p></details>
    </section>
-   <section className="controls" aria-label="Export settings"><div className="section-label">03 / PARTICULARS</div>
+   <section className="controls" aria-label="Export settings"><div className="section-label">03 / METADATA</div>
     <fieldset disabled={busy}>
      <div className="form-row"><label>Phone<select aria-label="Phone" value={phone} onChange={e=>selectPhone(Number(e.target.value))}>{phones.map((p,i)=><option key={p.id} value={i}>{p.name}</option>)}</select></label><label>Lens<select aria-label="Lens" value={lens} onChange={e=>{const i=Number(e.target.value);setReference(undefined);setLens(i);setSettings(s=>({...s,software:softwareManual.current?s.software:defaultSoftware(phones[phone].name,s.date,String(phones[phone].lenses[i].tags['EXIF:Software']??''))}));resetOutput();}}>{phones[phone].lenses.map((l,i)=><option value={i} key={l.id}>{l.name}</option>)}</select></label></div>
      <p className="note source-note">{importedName?'Imported camera values. All fields stay editable.':<>Sourced from a real sample. <a target="_blank" rel="noreferrer" href={current.source}>Source ↗</a><br/>Only verified lens profiles are offered.</>}</p>
@@ -77,7 +77,7 @@ export default function App(){
     <p className="status" role="status" aria-live="polite">{status||(!file?'Choose a photo to begin.':output?'Ready. Metadata checked locally.':'First export loads the local WASM engine.')}</p>{error&&<p className="error" role="alert">{error}</p>}
    </section>
   </div>
-  {before&&<details className="metadata"><summary>04 / METADATA <span>{output?'Before / after':'Original photo'}</span></summary><div className="table-scroll"><table><thead><tr><th>Tag</th><th>Before</th><th>After</th></tr></thead><tbody>{diffKeys.map(k=><tr key={k} className={output&&String(before[k])!==String(output.after[k])?'changed':''}><th scope="row">{k}</th><td>{String(before[k]??'—')}</td><td>{String(output?.after[k]??'—')}</td></tr>)}</tbody></table></div></details>}
+  {before&&<details className="metadata"><summary>04 / TAG DETAILS <span>{output?'Before / after':'Original photo'}</span></summary><div className="table-scroll"><table><thead><tr><th>Tag</th><th>Before</th><th>After</th></tr></thead><tbody>{diffKeys.map(k=><tr key={k} className={output&&String(before[k])!==String(output.after[k])?'changed':''}><th scope="row">{k}</th><td>{String(before[k]??'—')}</td><td>{String(output?.after[k]??'—')}</td></tr>)}</tbody></table></div></details>}
   <footer><span>editexif / made to stay local</span><a href="https://github.com/alissawu/editexif" target="_blank" rel="noreferrer">Source code ↗</a></footer>
  </main>;
 }
