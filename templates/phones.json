@@ -1,0 +1,212 @@
+[
+  {
+    "id": "Apple_iPhone16Pro",
+    "name": "iPhone 16 Pro",
+    "platform": "ios",
+    "lenses": [
+      {
+        "id": "ultrawide",
+        "name": "Ultrawide",
+        "source": "https://exiftool.org/Apple.tar.gz",
+        "sample": "Apple_iPhone16Pro.jpg",
+        "tags": {
+          "EXIF:Make": "Apple",
+          "EXIF:Model": "iPhone 16 Pro",
+          "EXIF:Software": 18.0,
+          "EXIF:LensModel": "iPhone 16 Pro back triple camera 2.22mm f/2.2",
+          "EXIF:LensMake": "Apple",
+          "EXIF:FocalLength": 2.220000029,
+          "EXIF:FocalLengthIn35mmFormat": 14,
+          "EXIF:FNumber": 2.2,
+          "EXIF:ExposureTime": 0.04166666667,
+          "EXIF:ISO": 320,
+          "EXIF:ExposureProgram": 2,
+          "EXIF:MeteringMode": 5,
+          "EXIF:Flash": 16,
+          "EXIF:WhiteBalance": 0,
+          "EXIF:ExposureCompensation": 0,
+          "EXIF:SceneCaptureType": 0,
+          "EXIF:SensingMethod": 2,
+          "EXIF:XResolution": 72,
+          "EXIF:YResolution": 72,
+          "EXIF:ResolutionUnit": 2
+        }
+      }
+    ]
+  },
+  {
+    "id": "Apple_iPhone15Pro",
+    "name": "iPhone 15 Pro",
+    "platform": "ios",
+    "lenses": [
+      {
+        "id": "main",
+        "name": "Main",
+        "source": "https://exiftool.org/Apple.tar.gz",
+        "sample": "Apple_iPhone15Pro.jpg",
+        "tags": {
+          "EXIF:Make": "Apple",
+          "EXIF:Model": "iPhone 15 Pro",
+          "EXIF:Software": "17.0.3",
+          "EXIF:LensModel": "iPhone 15 Pro back triple camera 6.86mm f/1.78",
+          "EXIF:LensMake": "Apple",
+          "EXIF:FocalLength": 6.860000134,
+          "EXIF:FocalLengthIn35mmFormat": 24,
+          "EXIF:FNumber": 1.779999971,
+          "EXIF:ExposureTime": 0.01098901099,
+          "EXIF:ISO": 125,
+          "EXIF:ExposureProgram": 2,
+          "EXIF:MeteringMode": 3,
+          "EXIF:Flash": 16,
+          "EXIF:WhiteBalance": 0,
+          "EXIF:ExposureCompensation": 0,
+          "EXIF:SceneCaptureType": 0,
+          "EXIF:SensingMethod": 2,
+          "EXIF:XResolution": 72,
+          "EXIF:YResolution": 72,
+          "EXIF:ResolutionUnit": 2
+        }
+      }
+    ]
+  },
+  {
+    "id": "Apple_iPhone15",
+    "name": "iPhone 15",
+    "platform": "ios",
+    "lenses": [
+      {
+        "id": "main",
+        "name": "Main",
+        "source": "https://exiftool.org/Apple.tar.gz",
+        "sample": "Apple_iPhone15.jpg",
+        "tags": {
+          "EXIF:Make": "Apple",
+          "EXIF:Model": "iPhone 15",
+          "EXIF:Software": "17.4.1",
+          "EXIF:LensModel": "iPhone 15 back dual wide camera 5.96mm f/1.6",
+          "EXIF:LensMake": "Apple",
+          "EXIF:FocalLength": 5.96,
+          "EXIF:FocalLengthIn35mmFormat": 26,
+          "EXIF:FNumber": 1.6,
+          "EXIF:ExposureTime": 0.025,
+          "EXIF:ISO": 500,
+          "EXIF:ExposureProgram": 2,
+          "EXIF:MeteringMode": 5,
+          "EXIF:Flash": 16,
+          "EXIF:WhiteBalance": 0,
+          "EXIF:ExposureCompensation": 0,
+          "EXIF:SceneCaptureType": 0,
+          "EXIF:SensingMethod": 2,
+          "EXIF:XResolution": 72,
+          "EXIF:YResolution": 72,
+          "EXIF:ResolutionUnit": 2
+        }
+      }
+    ]
+  },
+  {
+    "id": "Apple_iPhone14",
+    "name": "iPhone 14",
+    "platform": "ios",
+    "lenses": [
+      {
+        "id": "main",
+        "name": "Main",
+        "source": "https://exiftool.org/Apple.tar.gz",
+        "sample": "Apple_iPhone14.jpg",
+        "tags": {
+          "EXIF:Make": "Apple",
+          "EXIF:Model": "iPhone 14",
+          "EXIF:Software": "16.0.1",
+          "EXIF:LensModel": "iPhone 14 back dual wide camera 5.7mm f/1.5",
+          "EXIF:LensMake": "Apple",
+          "EXIF:FocalLength": 5.7,
+          "EXIF:FocalLengthIn35mmFormat": 26,
+          "EXIF:FNumber": 1.5,
+          "EXIF:ExposureTime": 0.000178986934,
+          "EXIF:ISO": 50,
+          "EXIF:ExposureProgram": 2,
+          "EXIF:MeteringMode": 5,
+          "EXIF:Flash": 16,
+          "EXIF:WhiteBalance": 0,
+          "EXIF:ExposureCompensation": 0,
+          "EXIF:SceneCaptureType": 0,
+          "EXIF:SensingMethod": 2,
+          "EXIF:XResolution": 72,
+          "EXIF:YResolution": 72,
+          "EXIF:ResolutionUnit": 2
+        }
+      }
+    ]
+  },
+  {
+    "id": "Apple_iPhone13",
+    "name": "iPhone 13",
+    "platform": "ios",
+    "lenses": [
+      {
+        "id": "main",
+        "name": "Main",
+        "source": "https://exiftool.org/Apple.tar.gz",
+        "sample": "Apple_iPhone13.jpg",
+        "tags": {
+          "EXIF:Make": "Apple",
+          "EXIF:Model": "iPhone 13",
+          "EXIF:Software": 15.0,
+          "EXIF:LensModel": "iPhone 13 back dual wide camera 5.1mm f/1.6",
+          "EXIF:LensMake": "Apple",
+          "EXIF:FocalLength": 5.1,
+          "EXIF:FocalLengthIn35mmFormat": 26,
+          "EXIF:FNumber": 1.6,
+          "EXIF:ExposureTime": 0.0008952551477,
+          "EXIF:ISO": 50,
+          "EXIF:ExposureProgram": 2,
+          "EXIF:MeteringMode": 5,
+          "EXIF:Flash": 16,
+          "EXIF:WhiteBalance": 0,
+          "EXIF:ExposureCompensation": 0,
+          "EXIF:SceneCaptureType": 0,
+          "EXIF:SensingMethod": 2,
+          "EXIF:XResolution": 72,
+          "EXIF:YResolution": 72,
+          "EXIF:ResolutionUnit": 2
+        }
+      }
+    ]
+  },
+  {
+    "id": "GooglePixel9",
+    "name": "Pixel 9",
+    "platform": "android",
+    "lenses": [
+      {
+        "id": "ultrawide",
+        "name": "Ultrawide",
+        "source": "https://exiftool.org/Google.tar.gz",
+        "sample": "GooglePixel9.jpg",
+        "tags": {
+          "EXIF:Make": "Google",
+          "EXIF:Model": "Pixel 9",
+          "EXIF:Software": "HDR+ 1.0.748116481zd",
+          "EXIF:LensModel": "Pixel 9 back camera 2.02mm f/1.7",
+          "EXIF:LensMake": "Google",
+          "EXIF:FocalLength": 2.02,
+          "EXIF:FocalLengthIn35mmFormat": 12,
+          "EXIF:FNumber": 1.7,
+          "EXIF:ExposureTime": 0.000427,
+          "EXIF:ISO": 54,
+          "EXIF:ExposureProgram": 2,
+          "EXIF:MeteringMode": 2,
+          "EXIF:Flash": 16,
+          "EXIF:WhiteBalance": 0,
+          "EXIF:ExposureCompensation": 0,
+          "EXIF:SceneCaptureType": 0,
+          "EXIF:SensingMethod": 2,
+          "EXIF:XResolution": 72,
+          "EXIF:YResolution": 72,
+          "EXIF:ResolutionUnit": 2
+        }
+      }
+    ]
+  }
+]

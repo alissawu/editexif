@@ -1,0 +1,9 @@
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import {offsetFor,buildTags,referenceTags,type Settings} from './settings';
+const s:Settings={date:'2026-07-07T12:34:56',timezone:'America/New_York',software:'18.0',filename:'IMG_0123',format:'jpeg',location:false,latitude:'',longitude:'',altitude:''};
+test('all offsets match date-specific DST',()=>{const t=buildTags({},s,123,456);assert.equal(t['EXIF:OffsetTime'],'-04:00');assert.equal(t['EXIF:OffsetTimeOriginal'],'-04:00');assert.equal(offsetFor('2026-01-01T12:00','America/New_York').offset,'-05:00');assert.equal(offsetFor(s.date,'Asia/Kathmandu').offset,'+05:45');});
+test('DST gap is rejected',()=>assert.throws(()=>offsetFor('2026-03-08T02:30','America/New_York'),/gap/));
+test('reference copy never brings foreign identity or location',()=>assert.deepEqual(referenceTags({'IFD0:Model':'iPhone 15','IFD0:Artist':'foreign','GPS:GPSLatitude':20,'XMP:Software':'Picsart','Apple:CameraType':1}),{'EXIF:Model':'iPhone 15'}));
+test('GPS hemisphere, UTC stamp and below sea level',()=>{const t=buildTags({}, {...s,location:true,latitude:'-33.86',longitude:'151.2',altitude:'-3'},123,456);assert.equal(t['EXIF:GPSLatitudeRef'],'S');assert.equal(t['EXIF:GPSAltitudeRef'],1);assert.equal(t['EXIF:GPSTimeStamp'],'16:34:56');});
+test('invalid input rejected',()=>{assert.throws(()=>buildTags({}, {...s,filename:'../a'},1,1));assert.throws(()=>buildTags({}, {...s,location:true,latitude:'91',longitude:'0'},1,1));});
