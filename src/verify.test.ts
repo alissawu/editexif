@@ -10,3 +10,12 @@ test('unexpected editor or location metadata fails closed',()=>{
  assert.throws(()=>verifyExport({'XMP-xmp:CreatorTool':'Picsart'},{}),/private/);
  assert.throws(()=>verifyExport({'GPS:GPSLatitude':1},{}),/location/);
 });
+
+test('full Apple payload and preserved input identity verify',async()=>{
+ const {verifyAppleMakerNotes}=await import('./verify');
+ const source={'Apple:MakerNoteVersion':15,'Apple:Apple_0x00ff':'opaque','Apple:PhotoIdentifier':'reference'};
+ const ids={'Apple:PhotoIdentifier':'input'};
+ verifyAppleMakerNotes({...source,...ids},source,ids,ids);
+ assert.throws(()=>verifyAppleMakerNotes({...source,...ids,'Apple:Apple_0x00ff':'lost'},source,ids,ids),/survive/);
+ assert.throws(()=>verifyAppleMakerNotes(source,source,{'Apple:PhotoIdentifier':'reference'},{}),/reused/);
+});

@@ -31,6 +31,10 @@
           "EXIF:SceneCaptureType": 0,
           "EXIF:LensMake": "Apple",
           "EXIF:LensModel": "iPhone 16 Pro back triple camera 6.765mm f/1.78"
+        },
+        "makerNotes": {
+          "path": "/makernotes/16pro_main.exif",
+          "sha256": "bc5fb8a817eb852ee64e538eadbd60f7fff90dd88eef8127ef1c93a5fc4dbcf9"
         }
       },
       {
@@ -60,6 +64,10 @@
           "EXIF:SceneCaptureType": 0,
           "EXIF:LensMake": "Apple",
           "EXIF:LensModel": "iPhone 16 Pro back triple camera 2.22mm f/2.2"
+        },
+        "makerNotes": {
+          "path": "/makernotes/16pro_ultrawide.exif",
+          "sha256": "21699abc4afdff6c29ccc5d58d886dbe92acc44d4d5d482e2e9a93354d0e828f"
         }
       },
       {
@@ -89,6 +97,10 @@
           "EXIF:SceneCaptureType": 0,
           "EXIF:LensMake": "Apple",
           "EXIF:LensModel": "iPhone 16 Pro back triple camera 15.66mm f/2.8"
+        },
+        "makerNotes": {
+          "path": "/makernotes/16pro_tele.exif",
+          "sha256": "b0b91acc009fc47baf63b4334f8579e67e94ce7a90142432bd0f1a69c493b3d2"
         }
       },
       {
@@ -118,6 +130,10 @@
           "EXIF:SceneCaptureType": 0,
           "EXIF:LensMake": "Apple",
           "EXIF:LensModel": "iPhone 16 Pro front TrueDepth camera 2.69mm f/1.9"
+        },
+        "makerNotes": {
+          "path": "/makernotes/16pro_front.exif",
+          "sha256": "c0e869f61dc81ce76f666c40c0f57897ab7e8d497779faed861afc96aa8763ec"
         }
       }
     ]
@@ -154,6 +170,10 @@
           "EXIF:SceneCaptureType": 0,
           "EXIF:LensMake": "Apple",
           "EXIF:LensModel": "iPhone 15 Pro back triple camera 6.86mm f/1.78"
+        },
+        "makerNotes": {
+          "path": "/makernotes/15pro_main.exif",
+          "sha256": "e6ea82c55268c3c8dea40f87ef5fdfbbb82505b97de8ba385f47407dd5f9ceb8"
         }
       },
       {
@@ -183,6 +203,10 @@
           "EXIF:SceneCaptureType": 0,
           "EXIF:LensMake": "Apple",
           "EXIF:LensModel": "iPhone 15 Pro back triple camera 2.22mm f/2.2"
+        },
+        "makerNotes": {
+          "path": "/makernotes/15pro_ultrawide.exif",
+          "sha256": "584eb533ba67f526ab53e9e7a1e57b7fa7a6025188066fb6e7c461515b216608"
         }
       },
       {
@@ -212,6 +236,10 @@
           "EXIF:SceneCaptureType": 0,
           "EXIF:LensMake": "Apple",
           "EXIF:LensModel": "iPhone 15 Pro back triple camera 9mm f/2.8"
+        },
+        "makerNotes": {
+          "path": "/makernotes/15pro_tele.exif",
+          "sha256": "5575d323ac91cea959ab1886b7d06d37b2682a9af42482f26a3b808b2bc3b214"
         }
       },
       {
@@ -241,6 +269,10 @@
           "EXIF:SceneCaptureType": 0,
           "EXIF:LensMake": "Apple",
           "EXIF:LensModel": "iPhone 15 Pro front TrueDepth camera 2.69mm f/1.9"
+        },
+        "makerNotes": {
+          "path": "/makernotes/15pro_front.exif",
+          "sha256": "444500e40ef46b3397978dd6665ec0a7e89f5ca1001fd7720dc4dcf920e2dc13"
         }
       }
     ]
@@ -277,6 +309,10 @@
           "EXIF:SceneCaptureType": 0,
           "EXIF:LensMake": "Apple",
           "EXIF:LensModel": "iPhone 15 back dual wide camera 5.96mm f/1.6"
+        },
+        "makerNotes": {
+          "path": "/makernotes/15_main.exif",
+          "sha256": "ef29628e1116df9228d6d1ab095e48c5d630e13e2545b57e83b6d360043524bb"
         }
       },
       {
@@ -306,6 +342,10 @@
           "EXIF:SceneCaptureType": 0,
           "EXIF:LensMake": "Apple",
           "EXIF:LensModel": "iPhone 15 back dual wide camera 1.54mm f/2.4"
+        },
+        "makerNotes": {
+          "path": "/makernotes/15_ultrawide.exif",
+          "sha256": "6cf7718a35cf7b1e318e5d1d2cdb1586f261bc847641bc6332f480b2d2780ef5"
         }
       },
       {
@@ -335,6 +375,10 @@
           "EXIF:SceneCaptureType": 0,
           "EXIF:LensMake": "Apple",
           "EXIF:LensModel": "iPhone 15 front TrueDepth camera 2.69mm f/1.9"
+        },
+        "makerNotes": {
+          "path": "/makernotes/15_front.exif",
+          "sha256": "90a449ca01150841732a05f677a2dcc4b3731a99c55623542040ef008695e480"
         }
       }
     ]
@@ -371,6 +415,10 @@
           "EXIF:SceneCaptureType": 0,
           "EXIF:LensMake": "Apple",
           "EXIF:LensModel": "iPhone 14 back dual wide camera 5.7mm f/1.5"
+        },
+        "makerNotes": {
+          "path": "/makernotes/14_main.exif",
+          "sha256": "4ab35894d1486ebc78864f52c21314cfbc24b46e7f1b6886d82a12ebd76d710e"
         }
       },
       {
@@ -400,6 +448,10 @@
           "EXIF:SceneCaptureType": 0,
           "EXIF:LensMake": "Apple",
           "EXIF:LensModel": "iPhone 14 back dual wide camera 1.54mm f/2.4"
+        },
+        "makerNotes": {
+          "path": "/makernotes/14_ultrawide.exif",
+          "sha256": "f5f079f2f05b80d453cfac42e31ee83b0d70fd4979313eccbba9e32b73081d3d"
         }
       },
       {
@@ -429,6 +481,10 @@
           "EXIF:SceneCaptureType": 0,
           "EXIF:LensMake": "Apple",
           "EXIF:LensModel": "iPhone 14 front camera 2.69mm f/1.9"
+        },
+        "makerNotes": {
+          "path": "/makernotes/14_front.exif",
+          "sha256": "cfcdaefff6ef93506c8a37bebd44467751e7834e0a529cd7f2889c361ad4a65f"
         }
       }
     ]
@@ -465,6 +521,10 @@
           "EXIF:SceneCaptureType": 0,
           "EXIF:LensMake": "Apple",
           "EXIF:LensModel": "iPhone 13 back dual wide camera 5.1mm f/1.6"
+        },
+        "makerNotes": {
+          "path": "/makernotes/Apple_iPhone13_main.exif",
+          "sha256": "5338d1d3238696f5a408b735d58d2ad752c83b89d16b5e125fadb5b3667ff39b"
         }
       },
       {
@@ -494,6 +554,10 @@
           "EXIF:SceneCaptureType": 0,
           "EXIF:LensMake": "Apple",
           "EXIF:LensModel": "iPhone 13 back dual wide camera 1.54mm f/2.4"
+        },
+        "makerNotes": {
+          "path": "/makernotes/Apple_iPhone13_ultrawide.exif",
+          "sha256": "ddac7b06a175140650af9ec1a5ea5539eb4973548752a7770dd47930f960b471"
         }
       },
       {
@@ -523,6 +587,10 @@
           "EXIF:SceneCaptureType": 0,
           "EXIF:LensMake": "Apple",
           "EXIF:LensModel": "iPhone 13 front camera 2.71mm f/2.2"
+        },
+        "makerNotes": {
+          "path": "/makernotes/Apple_iPhone13_front.exif",
+          "sha256": "d7cabc9234c0da4dc9c0ed9ad99406eba57764e8be32f7ad4a2aad6973e27b89"
         }
       }
     ]

@@ -7,7 +7,9 @@
     "dev": "vite --host 0.0.0.0",
     "build": "tsc -b && vite build",
     "preview": "vite preview --host 0.0.0.0",
-    "test": "tsx --test src/*.test.ts"
+    "test": "tsx --test src/*.test.ts",
+    "prebuild": "node scripts/prepare-exiftool.mjs",
+    "predev": "node scripts/prepare-exiftool.mjs"
   },
   "repository": {
     "type": "git",
@@ -21,6 +23,7 @@
   },
   "homepage": "https://github.com/alissawu/editexif#readme",
   "dependencies": {
+    "@6over3/zeroperl-ts": "1.0.10",
     "@uswriting/exiftool": "1.0.9",
     "elheif": "^0.1.0",
     "libheif-js": "^1.23.5",

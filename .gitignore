@@ -5,3 +5,5 @@ artifacts/
 *.log
 
 *.tsbuildinfo
+
+public/exiftool.pl
