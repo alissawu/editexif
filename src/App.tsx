@@ -21,7 +21,7 @@ export default function App(){
    if(event.data.id!==request.current)return;
    if(event.data.status){setStatus(event.data.status);return;}
    setBusy(false);setStatus('');if(event.data.error){setError(event.data.error);return;}
-   const result=event.data.result!;setBefore(result.before);
+   const result=event.data.result!;setBefore(result.before);if(result.preview)showPreview(result.preview);
    if(action==='export'){setOutput(result);showPreview(result.preview);}
   };
   worker.current.postMessage({id,action,file:input,reference,base:phones[phone].lenses[lens].tags,settings});
@@ -48,7 +48,7 @@ export default function App(){
    </section>
    <section className="controls" aria-label="Export settings"><div className="section-label">02 / PARTICULARS</div>
     <fieldset disabled={busy}>
-     <div className="form-row"><label>Phone<select value={phone} onChange={e=>selectPhone(Number(e.target.value))}>{phones.map((p,i)=><option key={p.id} value={i}>{p.name}</option>)}</select></label><label>Lens<select value={lens} onChange={e=>{setLens(Number(e.target.value));resetOutput();}}>{phones[phone].lenses.map((l,i)=><option value={i} key={l.id}>{l.name}</option>)}</select></label></div>
+     <div className="form-row"><label>Phone<select value={phone} onChange={e=>selectPhone(Number(e.target.value))}>{phones.map((p,i)=><option key={p.id} value={i}>{p.name}</option>)}</select></label><label>Lens<select value={lens} onChange={e=>{const i=Number(e.target.value);setLens(i);setSettings(s=>({...s,software:String(phones[phone].lenses[i].tags['EXIF:Software']??'')}));resetOutput();}}>{phones[phone].lenses.map((l,i)=><option value={i} key={l.id}>{l.name}</option>)}</select></label></div>
      <p className="note source-note">Sourced from a real sample. <a target="_blank" rel="noreferrer" href={current.source}>Source ↗</a><br/>Only verified lens profiles are offered. Use a reference for others.</p>
      <div className="form-row"><label>Capture date<input type="datetime-local" step="1" value={settings.date} onChange={e=>update('date',e.target.value)}/></label><label>Timezone<input list="timezones" value={settings.timezone} onChange={e=>update('timezone',e.target.value)} placeholder="America/New_York"/><datalist id="timezones"><option value="UTC"/>{timezones.map(z=><option key={z} value={z}/>)}</datalist></label></div>
      <div className="rule"/>

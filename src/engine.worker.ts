@@ -22,7 +22,16 @@ self.onmessage=async (event:MessageEvent<{id:number;action:'inspect'|'export';fi
   if(file.size>60*1024*1024) throw Error('Use a photo under 60 MB.');
   self.postMessage({id,status:'Reading metadata locally…'});
   const before=await read(file);
-  if(action==='inspect'){self.postMessage({id,result:{before}});return;}
+  const mw=Number(before['File:ImageWidth']??before['ExifIFD:ExifImageWidth']), mh=Number(before['File:ImageHeight']??before['ExifIFD:ExifImageHeight']);
+  if(mw*mh>50_000_000)throw Error('Use a photo under 50 megapixels to keep browser memory safe.');
+  if(action==='inspect'){
+   const bitmap=await decode(file,before);const scale=Math.min(1,1400/Math.max(bitmap.width,bitmap.height));
+   const c=new OffscreenCanvas(Math.max(1,Math.round(bitmap.width*scale)),Math.max(1,Math.round(bitmap.height*scale)));
+   const ctx=c.getContext('2d')!;ctx.fillStyle='#fff';ctx.fillRect(0,0,c.width,c.height);ctx.drawImage(bitmap,0,0,c.width,c.height);bitmap.close();
+   self.postMessage({id,result:{before,preview:await c.convertToBlob({type:'image/jpeg',quality:0.85})}});return;
+  }
+  if(reference && reference.size>60*1024*1024)throw Error('Reference must be under 60 MB.');
+  buildTags(base,settings,1,1);
   self.postMessage({id,status:'Re-encoding clean pixels…'});
   const bitmap=await decode(file,before); const {width,height}=bitmap;
   if(width*height>50_000_000){bitmap.close();throw Error('Use a photo under 50 megapixels to keep browser memory safe.');}
