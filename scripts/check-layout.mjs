@@ -1,0 +1,2 @@
+import {chromium} from 'playwright';
+const browser=await chromium.launch({args:['--no-sandbox']});const p=await browser.newPage();await p.goto(process.env.PREVIEW_URL||'http://localhost:48371');await p.screenshot({path:'artifacts/desktop-empty.png',fullPage:true});await p.setViewportSize({width:390,height:844});await p.screenshot({path:'artifacts/mobile-empty.png',fullPage:true});if(!await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth))throw Error('Mobile overflow');await browser.close();
