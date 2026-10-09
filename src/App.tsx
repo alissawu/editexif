@@ -11,7 +11,7 @@ const timezones=timezoneOptions(initial.timezone);
 export default function App(){
  const [phones,setPhones]=useState<Profile[]>(templates);const [importedName,setImportedName]=useState('');const [missing,setMissing]=useState<string[]>([]);const importInput=useRef<HTMLInputElement|null>(null);
  const [file,setFile]=useState<File>();const [reference,setReference]=useState<File>();const [phone,setPhone]=useState(0);const [lens,setLens]=useState(0);const [settings,setSettings]=useState(initial);
- const [before,setBefore]=useState<Tags>();const [output,setOutput]=useState<Output>();const [preview,setPreview]=useState('');const [busy,setBusy]=useState(false);const [status,setStatus]=useState('');const [error,setError]=useState('');const [drag,setDrag]=useState(false);
+ const [before,setBefore]=useState<Tags>();const [output,setOutput]=useState<Output>();const [preview,setPreview]=useState('');const [busy,setBusy]=useState(false);const [status,setStatus]=useState('');const [error,setError]=useState('');const [drag,setDrag]=useState(false);const [importDrag,setImportDrag]=useState(false);
  const softwareManual=useRef(false);
  const worker=useRef<Worker|null>(null);const request=useRef(0);const objectUrl=useRef('');
  function resetOutput(){setOutput(undefined);setError('');}
@@ -48,10 +48,20 @@ export default function App(){
      {!file?<div className="drop-copy"><span className="upload-icon" aria-hidden="true">＋</span><strong>Drop a photo here</strong><span>or click to choose a file</span><small>JPEG · PNG · HEIC · WEBP<br/>up to 60 MB / 50 megapixels</small></div>:<div className="image-caption">{file.name}<span>{busy?'Working locally': 'Click to replace'}</span></div>}
     </label>
     {file&&<p className="note">{output?output.width+' × '+output.height+' pixels. Clean export ready.':'Original metadata read locally. Click the image to replace it.'}</p>}
+    <div className="import-photo">
+      <div className="section-label">02 / IMPORT FROM A REAL PHOTO</div>
+      <label className={'dropzone import-dropzone '+(importDrag?'drag':'')} onDragOver={e=>{e.preventDefault();if(!busy)setImportDrag(true);}} onDragLeave={()=>setImportDrag(false)} onDrop={e=>{e.preventDefault();setImportDrag(false);const input=e.dataTransfer.files[0];if(input&&!busy)run('import',input);}}>
+       <input ref={importInput} aria-label="Import from a real photo" type="file" accept="image/*,.heic,.heif" disabled={busy} onChange={e=>{const input=e.target.files?.[0];if(input)run('import',input);}}/>
+       <div className="drop-copy"><span className="upload-icon" aria-hidden="true">＋</span><strong>Drop a reference photo</strong><span>or tap to choose or take one</span><small>Auto-fill every available setting.<br/>Edit anything afterward.</small></div>
+      </label>
+      {importedName&&<p className="note imported-note">Imported from {importedName} <button className="text-button" type="button" onClick={()=>{setReference(undefined);setImportedName('');setMissing([]);setPhones(templates);setPhone(0);setLens(0);setSettings(initial);softwareManual.current=false;if(importInput.current)importInput.current.value='';resetOutput();}}>Clear</button></p>}
+      {missing.length>0&&<p className="note" role="status">Not available in this file{': '}{missing.join(', ')}. Camera/software use template defaults where available; missing location stays off and date/time uses the current default. Photo pickers may convert HEIC to JPEG or remove metadata. Choose File with an original can retain more. Full Apple MakerNotes may contain private vendor data.</p>}
+     </div>
+
     <div className="privacy-note"><span className="privacy-symbol" aria-hidden="true">[✓]</span><p>No uploads. No account. No tracking.<br/>Your photo never leaves this tab.</p></div>
     <details className="how"><summary>What this changes</summary><p>The image is re-encoded, removing existing metadata, then standard EXIF tags are added. Pixels keep their appearance, but compression may change them.</p><p>This is not a native camera capture. Apple MakerNotes are copied from a real sample or reference, preserving known input shot IDs and generating missing ones. They describe that sample, not your scene. Depth, Live Photo data, HDR gain maps and valid provenance signatures are not recreated. It does not guarantee a detector result.</p></details>
    </section>
-   <section className="controls" aria-label="Export settings"><div className="section-label">02 / PARTICULARS</div>
+   <section className="controls" aria-label="Export settings"><div className="section-label">03 / PARTICULARS</div>
     <fieldset disabled={busy}>
      <div className="form-row"><label>Phone<select aria-label="Phone" value={phone} onChange={e=>selectPhone(Number(e.target.value))}>{phones.map((p,i)=><option key={p.id} value={i}>{p.name}</option>)}</select></label><label>Lens<select aria-label="Lens" value={lens} onChange={e=>{const i=Number(e.target.value);setReference(undefined);setLens(i);setSettings(s=>({...s,software:softwareManual.current?s.software:defaultSoftware(phones[phone].name,s.date,String(phones[phone].lenses[i].tags['EXIF:Software']??''))}));resetOutput();}}>{phones[phone].lenses.map((l,i)=><option value={i} key={l.id}>{l.name}</option>)}</select></label></div>
      <p className="note source-note">{importedName?'Imported camera values. All fields stay editable.':<>Sourced from a real sample. <a target="_blank" rel="noreferrer" href={current.source}>Source ↗</a><br/>Only verified lens profiles are offered.</>}</p>
@@ -62,17 +72,12 @@ export default function App(){
      <div className="rule"/>
      <div className="form-row"><label>{phones[phone].platform==='ios'?'iOS version':'Camera software'}<input aria-label={phones[phone].platform==='ios'?'iOS version':'Camera software'} list={phones[phone].platform==='ios'?'ios-versions':undefined} value={settings.software} onChange={e=>update('software',e.target.value)} maxLength={80}/>{phones[phone].platform==='ios'&&<datalist id="ios-versions">{iosOptions(phones[phone].name,settings.date).map(v=><option key={v} value={v}>iOS {v}</option>)}</datalist>}</label><label>Output format<select value={settings.format} onChange={e=>update('format',e.target.value as Settings['format'])}><option value="heic">HEIC</option><option value="jpeg">JPEG</option></select></label></div>
      <label className="filename">Filename<div className="input-suffix"><input value={settings.filename} onChange={e=>update('filename',e.target.value)} maxLength={80}/><span>.{settings.format==='heic'?'heic':'jpg'}</span><button type="button" aria-label="Randomize filename" onClick={()=>update('filename',randomFilename())}>↻</button></div></label>
-<div className="import-photo">
-      <label className="import-box"><strong>Import from a real photo</strong><span>Fill every available setting, then edit anything.</span><input ref={importInput} aria-label="Import from a real photo" type="file" accept="image/*,.heic,.heif" onChange={e=>{const input=e.target.files?.[0];if(input)run('import',input);}}/></label>
-      {importedName&&<p className="note imported-note">Imported from {importedName} <button className="text-button" type="button" onClick={()=>{setReference(undefined);setImportedName('');setMissing([]);setPhones(templates);setPhone(0);setLens(0);setSettings(initial);softwareManual.current=false;if(importInput.current)importInput.current.value='';resetOutput();}}>Clear</button></p>}
-      {missing.length>0&&<p className="note" role="status">Not available in this file{': '}{missing.join(', ')}. Camera/software use template defaults where available; missing location stays off and date/time uses the current default. Photo pickers may convert HEIC to JPEG or remove metadata. Choose File with an original can retain more. Full Apple MakerNotes may contain private vendor data.</p>}
-     </div>
     </fieldset>
     <div className="actions"><button className="primary" disabled={!file||busy} onClick={()=>file&&run('export',file)}>{busy?'Working…':output?'Regenerate photo':'Create photo'}<span aria-hidden="true">↗</span></button>{output&&<button className="download" onClick={download}>Download .{settings.format==='heic'?'heic':'jpg'}<span>{(output.blob.size/1048576).toFixed(2)} MB</span></button>}</div>
     <p className="status" role="status" aria-live="polite">{status||(!file?'Choose a photo to begin.':output?'Ready. Metadata checked locally.':'First export loads the local WASM engine.')}</p>{error&&<p className="error" role="alert">{error}</p>}
    </section>
   </div>
-  {before&&<details className="metadata"><summary>03 / METADATA <span>{output?'Before / after':'Original photo'}</span></summary><div className="table-scroll"><table><thead><tr><th>Tag</th><th>Before</th><th>After</th></tr></thead><tbody>{diffKeys.map(k=><tr key={k} className={output&&String(before[k])!==String(output.after[k])?'changed':''}><th scope="row">{k}</th><td>{String(before[k]??'—')}</td><td>{String(output?.after[k]??'—')}</td></tr>)}</tbody></table></div></details>}
+  {before&&<details className="metadata"><summary>04 / METADATA <span>{output?'Before / after':'Original photo'}</span></summary><div className="table-scroll"><table><thead><tr><th>Tag</th><th>Before</th><th>After</th></tr></thead><tbody>{diffKeys.map(k=><tr key={k} className={output&&String(before[k])!==String(output.after[k])?'changed':''}><th scope="row">{k}</th><td>{String(before[k]??'—')}</td><td>{String(output?.after[k]??'—')}</td></tr>)}</tbody></table></div></details>}
   <footer><span>editexif / made to stay local</span><a href="https://github.com/alissawu/editexif" target="_blank" rel="noreferrer">Source code ↗</a></footer>
  </main>;
 }
