@@ -11,4 +11,4 @@ function workerBrowserFix(): Plugin {
   }
  }};
 }
-export default defineConfig({ plugins: [react(),workerBrowserFix()], worker: { format: 'es',plugins:()=>[workerBrowserFix()] } });
+export default defineConfig({ plugins: [react(),workerBrowserFix()],preview:{allowedHosts:["candidly-healthily-dandy-taipan.kitten.space"]}, worker: { format: 'es',plugins:()=>[workerBrowserFix()] } });

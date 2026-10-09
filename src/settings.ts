@@ -25,7 +25,7 @@ export function offsetFor(date: string, timezone: string) {
 export function buildTags(base: Tags, s: Settings, width: number, height: number): Tags {
  const {offset, instant}=offsetFor(s.date,s.timezone);
  const date=s.date.replace('T',' ').replace(/-/g,':')+(s.date.length===16?':00':'');
- const tags: Tags={...base,'EXIF:Orientation':1,'EXIF:ExifImageWidth':width,'EXIF:ExifImageHeight':height,'EXIF:ColorSpace':1,'EXIF:DateTimeOriginal':date,'EXIF:CreateDate':date,'EXIF:ModifyDate':date,'EXIF:OffsetTime':offset,'EXIF:OffsetTimeOriginal':offset,'EXIF:OffsetTimeDigitized':offset};
+ const tags: Tags={...base,'EXIF:ExifVersion':'0232','EXIF:FlashpixVersion':'0100','EXIF:Orientation':1,'EXIF:ExifImageWidth':width,'EXIF:ExifImageHeight':height,'EXIF:ColorSpace':1,'EXIF:DateTimeOriginal':date,'EXIF:CreateDate':date,'EXIF:ModifyDate':date,'EXIF:OffsetTime':offset,'EXIF:OffsetTimeOriginal':offset,'EXIF:OffsetTimeDigitized':offset};
  delete tags['EXIF:Software']; if(s.software.trim()) tags['EXIF:Software']=s.software.trim();
  if(!/^[a-zA-Z0-9_ -]{1,80}$/.test(s.filename)) throw Error('Use a filename with letters, numbers, spaces, underscores or hyphens.');
  if(s.location){
