@@ -38,7 +38,7 @@ export default function App(){
  const current=phones[phone].lenses[lens];const diffKeys=[...new Set([...Object.keys(before??{}),...Object.keys(output?.after??{})])].filter(k=>!['SourceFile','System:FileName','System:Directory','System:FileModifyDate','System:FileAccessDate','System:FileInodeChangeDate','ExifTool:ExifToolVersion'].includes(k)).sort();
  return <main>
   <header><a className="wordmark" href="/" aria-label="editexif home">editexif<span className="mark">*</span></a><span className="local"><span className="dot"/> LOCAL ONLY</span></header>
-  <section className="intro"><p className="eyebrow">A SMALL TOOL FOR PHOTO METADATA</p><h1>Same photo.<br/>New metadata.</h1><p className="lede">Choose a camera, a moment, a place.<br/>Everything stays in your browser.</p></section>
+  <section className="intro"><h1>Same photo.<br/>New metadata.</h1><p className="lede">Choose a camera, a moment, a place.<br/>Everything stays in your browser.</p></section>
   <div className="workspace">
    <section className="image-panel" aria-label="Photo">
     <div className="section-label"><span>01 / PHOTO</span>{file&&<span>{(file.size/1048576).toFixed(1)} MB</span>}</div>
