@@ -1,4 +1,5 @@
 import { parseMetadata, writeMetadata } from '@uswriting/exiftool';
+import {verifyExport} from './verify';
 import { buildTags, referenceTags, type Tags, type Settings } from './settings';
 const localFetch = async (..._args: unknown[]) => fetch('/zeroperl.wasm');
 async function read(file: File): Promise<Tags> {
@@ -34,7 +35,9 @@ self.onmessage=async (event:MessageEvent<{id:number;action:'inspect'|'export';fi
    self.postMessage({id,result:{before,preview:await c.convertToBlob({type:'image/jpeg',quality:0.85})}});return;
   }
   if(reference && reference.size>60*1024*1024)throw Error('Reference must be under 60 MB.');
-  buildTags(base,settings,1,1);
+  const chosen=reference?referenceTags(await read(reference)):base;
+  if(!chosen['EXIF:Model'])throw Error('Reference has no camera model in standard EXIF. Use a camera original or remove the reference.');
+  buildTags(chosen,settings,1,1);
   self.postMessage({id,status:'Re-encoding clean pixels…'});
   const bitmap=await decode(file,before); const {width,height}=bitmap;
   if(width*height>50_000_000){bitmap.close();throw Error('Use a photo under 50 megapixels to keep browser memory safe.');}
@@ -47,8 +50,6 @@ self.onmessage=async (event:MessageEvent<{id:number;action:'inspect'|'export';fi
    if(result.err||!result.data.length)throw Error(result.err||'HEIC encoder failed. Try JPEG.');
    clean=new Blob([new Uint8Array(result.data)],{type:'image/heic'});
   }else clean=await canvas.convertToBlob({type:'image/jpeg',quality:0.94});
-  const chosen=reference?referenceTags(await read(reference)):base;
-  if(!chosen['EXIF:Model'])throw Error('Reference has no camera model in standard EXIF. Use a camera original or remove the reference.');
   const tags=buildTags(chosen,settings,width,height);
   self.postMessage({id,status:'Writing EXIF and checking output…'});
   const output=await writeMetadata({name:'clean.'+(settings.format==='heic'?'heic':'jpg'),data:clean},tags,{fetch:localFetch,args:['-n','-q','-q']});
@@ -56,6 +57,7 @@ self.onmessage=async (event:MessageEvent<{id:number;action:'inspect'|'export';fi
   const blob=new Blob([output.data],{type:settings.format==='heic'?'image/heic':'image/jpeg'});
   const after=await read(new File([blob],'output.'+(settings.format==='heic'?'heic':'jpg')));
   for(const key of ['ExifIFD:ExifImageWidth','ExifIFD:ExifImageHeight'])if(Number(after[key])!==(key.endsWith('Width')?width:height))throw Error('Output dimensions did not verify. No download created.');
+  verifyExport(after,tags);
   self.postMessage({id,result:{blob,preview,before,after,width,height,tags}});
  }catch(error){self.postMessage({id,error:error instanceof Error?error.message:String(error)});}
 };
